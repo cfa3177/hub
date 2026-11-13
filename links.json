@@ -249,6 +249,15 @@
       "owner": "Brent",
       "status": "",
       "hidden": false
+    },
+    {
+      "name": "Bus Scenario",
+      "url": "https://cfa3177.github.io/bus-scenario/",
+      "description": "How to own, move, and revive every tool.",
+      "category": "Leadership",
+      "owner": "Brent",
+      "status": "new",
+      "hidden": false
     }
   ]
 }
