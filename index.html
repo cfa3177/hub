@@ -146,6 +146,7 @@
     border-top: 1px solid var(--line);
     color: var(--muted); font-size: .85rem;
   }
+  .leader-link { color: var(--muted); }
   @media (prefers-reduced-motion: reduce) { a.card { transition: none; } }
 </style>
 </head>
@@ -170,14 +171,12 @@
   <footer id="footer"></footer>
 </div>
 
-<!-- The list of links lives in links.js. Edit that file, not this one. -->
-<script src="links.js"></script>
+<!-- The list of links lives in links.json. Leaders edit it from leader.html. -->
 <script>
 (function () {
   "use strict";
 
   var main = document.getElementById("main");
-  var hub = window.HUB;
 
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -186,17 +185,31 @@
     return node;
   }
 
-  // If links.js is missing or has a typo, say so plainly instead of going blank.
-  if (!hub || !Array.isArray(hub.links)) {
+  // If the list cannot be read, say so plainly instead of going blank.
+  function showProblem() {
+    main.textContent = "";
     var box = el("div", "problem");
     box.appendChild(el("strong", null, "The list of links could not be loaded."));
     box.appendChild(el("span", null,
-      "This usually means the last edit to links.js left out a comma or a quote mark. " +
-      "Undo that edit and the page will come back."));
+      "Try refreshing the page. If it stays like this, let a leader know so the " +
+      "last working version can be restored."));
     main.appendChild(box);
     document.getElementById("search").disabled = true;
-    return;
   }
+
+  // Ask for a fresh copy each minute so edits from the leader view show up quickly.
+  fetch("links.json?v=" + Math.floor(Date.now() / 60000), { cache: "no-store" })
+    .then(function (response) {
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      return response.json();
+    })
+    .then(function (hub) {
+      if (!hub || !Array.isArray(hub.links)) throw new Error("Unexpected data");
+      start(hub);
+    })
+    .catch(showProblem);
+
+  function start(hub) {
 
   // Header and footer text
   if (hub.title) {
@@ -207,7 +220,11 @@
   var footerBits = [];
   if (hub.contact) footerBits.push("Missing a link or found a broken one? Ask " + hub.contact + ".");
   if (hub.updated) footerBits.push("Last updated " + hub.updated + ".");
-  document.getElementById("footer").textContent = footerBits.join(" ");
+  var footer = document.getElementById("footer");
+  footer.appendChild(el("span", null, footerBits.join(" ") + " "));
+  var leaderLink = el("a", "leader-link", "Leader view");
+  leaderLink.href = "leader.html";
+  footer.appendChild(leaderLink);
 
   // Only real web addresses become clickable.
   function safeUrl(value) {
@@ -310,6 +327,7 @@
   });
 
   render();
+  }
 })();
 </script>
 </body>

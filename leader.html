@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Leader view</title>
+<style>
+  :root {
+    --bg: #faf8f5;
+    --surface: #ffffff;
+    --ink: #1f2328;
+    --muted: #5f6670;
+    --line: #e4e0da;
+    --accent: #b3202a;
+    --accent-ink: #ffffff;
+    --accent-soft: #fbe9ea;
+    --ok: #1a7f37;
+    --ok-soft: #e6f4ea;
+    --gray-soft: #eeece8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15171a;
+      --surface: #1e2125;
+      --ink: #ecedee;
+      --muted: #9ba1a9;
+      --line: #2e3238;
+      --accent: #f0767d;
+      --accent-ink: #15171a;
+      --accent-soft: #3a1f22;
+      --ok: #6fd08c;
+      --ok-soft: #1c3324;
+      --gray-soft: #2a2d32;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  h1 { margin: 0; font-size: 1.6rem; line-height: 1.2; }
+  h2 { margin: 0; font-size: 1.05rem; }
+  p { margin: 0; }
+  a { color: var(--accent); }
+  .muted { color: var(--muted); }
+  .small { font-size: .88rem; }
+
+  button, input, select, textarea { font: inherit; color: inherit; }
+  .btn {
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:hover:not(:disabled) { border-color: var(--muted); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  .btn.danger { color: var(--accent); }
+  .btn.icon { padding: 6px 10px; min-width: 38px; }
+  .btn:focus-visible, input:focus, select:focus, textarea:focus {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+
+  label { display: block; font-size: .88rem; font-weight: 600; margin-bottom: 4px; }
+  input[type="text"], input[type="password"], input[type="url"], select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .field { margin-top: 14px; }
+  .hint { margin-top: 4px; font-size: .82rem; color: var(--muted); }
+  .error {
+    margin-top: 14px; padding: 10px 12px;
+    background: var(--accent-soft); color: var(--accent);
+    border-radius: 8px; font-size: .92rem;
+  }
+  .check { display: flex; gap: 8px; align-items: flex-start; margin-top: 14px; font-weight: 400; font-size: .92rem; }
+  .check input { margin-top: 4px; }
+
+  /* Sign-in */
+  #login { max-width: 440px; margin: 0 auto; padding: 56px 20px; }
+  #login .panel {
+    margin-top: 20px; padding: 22px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  }
+  #login .btn { width: 100%; margin-top: 18px; padding: 11px; }
+
+  /* Editor */
+  .topbar { padding: 28px 0 14px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  .topbar .links { display: flex; gap: 14px; align-items: center; font-size: .92rem; }
+  .linkish { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; cursor: pointer; }
+
+  .savebar {
+    position: sticky; top: 0; z-index: 5;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 0;
+  }
+  .savebar .wrap { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+  .state { font-size: .92rem; color: var(--muted); }
+  .state.dirty { color: var(--accent); font-weight: 600; }
+  .state.saved { color: var(--ok); font-weight: 600; }
+  .savebar .actions { display: flex; gap: 8px; }
+
+  .block {
+    margin-top: 20px; padding: 16px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  }
+  .block-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+  .tools { display: flex; gap: 6px; flex-wrap: wrap; }
+  .grid2 { display: grid; gap: 0 14px; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .rows { margin-top: 10px; }
+  .row {
+    display: flex; gap: 10px; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-top: 1px solid var(--line);
+  }
+  .row .info { min-width: 0; flex: 1; }
+  .row .name { font-weight: 600; }
+  .row .url { font-size: .8rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .badge { margin-left: 6px; padding: 1px 7px; font-size: .7rem; font-weight: 600; border-radius: 999px; background: var(--gray-soft); color: var(--muted); }
+  .empty-row { padding: 10px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .92rem; }
+  .add-row { margin-top: 10px; }
+  @media (max-width: 600px) {
+    .row { flex-direction: column; align-items: stretch; }
+    .row .tools { justify-content: flex-end; }
+  }
+  .bottom { margin: 20px 0 60px; }
+
+  dialog {
+    width: min(560px, calc(100vw - 32px));
+    padding: 22px;
+    background: var(--surface); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 14px;
+  }
+  dialog::backdrop { background: rgba(0, 0, 0, .45); }
+  .dialog-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<!-- ============================ Sign in ============================ -->
+<div id="login">
+  <h1>Leader view</h1>
+  <p class="muted" style="margin-top:6px">Sign in to add, remove, or rearrange the links on the hub.</p>
+  <form class="panel" id="loginForm" autocomplete="off">
+    <label for="key">Editor key</label>
+    <input id="key" type="password" autocomplete="off" spellcheck="false" required>
+    <p class="hint">Ask the hub owner if you do not have one.</p>
+    <label class="check">
+      <input id="remember" type="checkbox">
+      <span>Remember me on this device. Leave this off on shared store devices.</span>
+    </label>
+    <div class="error" id="loginError" hidden></div>
+    <button class="btn primary" id="loginButton" type="submit">Sign in</button>
+  </form>
+  <p class="small" style="margin-top:16px"><a href="./">Back to the hub</a></p>
+</div>
+
+<!-- ============================ Editor ============================ -->
+<div id="app" hidden>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>Leader view</h1>
+      <div class="links">
+        <a href="./" target="_blank" rel="noopener">Open the hub</a>
+        <button class="linkish" id="signOut" type="button">Sign out</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="savebar">
+    <div class="wrap">
+      <span class="state" id="state">No unsaved changes</span>
+      <div class="actions">
+        <button class="btn" id="discard" type="button" disabled>Discard changes</button>
+        <button class="btn primary" id="publish" type="button" disabled>Publish changes</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="error" id="appError" hidden></div>
+
+    <div class="block">
+      <h2>Page text</h2>
+      <div class="grid2">
+        <div class="field"><label for="fTitle">Title</label><input id="fTitle" type="text"></div>
+        <div class="field"><label for="fContact">Who to ask about missing links</label><input id="fContact" type="text"></div>
+      </div>
+      <div class="field"><label for="fSubtitle">Line under the title</label><input id="fSubtitle" type="text"></div>
+    </div>
+
+    <div id="sections"></div>
+
+    <div class="bottom">
+      <button class="btn" id="addSection" type="button">+ Add a section</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ Link form ============================ -->
+<dialog id="linkDialog">
+  <form id="linkForm" method="dialog" novalidate>
+    <h2 id="linkDialogTitle">Edit link</h2>
+    <div class="field"><label for="lName">Name</label><input id="lName" type="text" maxlength="80"></div>
+    <div class="field">
+      <label for="lUrl">Web address</label>
+      <input id="lUrl" type="url" placeholder="https://" spellcheck="false">
+      <p class="hint">Leave blank to show "Coming soon".</p>
+    </div>
+    <div class="field"><label for="lDesc">Short description</label><input id="lDesc" type="text" maxlength="140"></div>
+    <div class="grid2">
+      <div class="field"><label for="lCat">Section</label><select id="lCat"></select></div>
+      <div class="field"><label for="lOwner">Who to ask when it breaks</label><input id="lOwner" type="text" maxlength="40"></div>
+    </div>
+    <div class="field">
+      <label for="lStatus">Badge</label>
+      <select id="lStatus">
+        <option value="">None</option>
+        <option value="new">New</option>
+        <option value="moving">Moving (address is about to change)</option>
+      </select>
+    </div>
+    <div class="error" id="linkError" hidden></div>
+    <div class="dialog-actions">
+      <button class="btn" id="linkCancel" type="button">Cancel</button>
+      <button class="btn primary" type="submit">Done</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(function () {
+  "use strict";
+
+  // Where the hub lives. Worked out from the page address, so this file keeps
+  // working if the hub is ever moved to another GitHub account.
+  var host = location.hostname.match(/^([^.]+)\.github\.io$/);
+  var OWNER = host ? host[1] : "cfa3177";
+  var REPO = host ? (location.pathname.split("/")[1] || OWNER + ".github.io") : "hub";
+  var FILE = "links.json";
+  var BRANCH = "main";
+  var API = "https://api.github.com/repos/" + OWNER + "/" + REPO;
+  var STORE = "hubEditorKey";
+
+  var key = "";        // the editor key, held only in this browser
+  var fileSha = "";    // version marker GitHub needs to accept a save
+  var data = null;     // the list being edited
+  var original = "";   // last published copy, for "Discard changes"
+  var dirty = false;
+  var editing = null;  // { index } when editing, { category } when adding
+
+  function $(id) { return document.getElementById(id); }
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+  function button(label, className, title, onClick) {
+    var b = el("button", "btn " + (className || ""), label);
+    b.type = "button";
+    if (title) { b.title = title; b.setAttribute("aria-label", title); }
+    b.addEventListener("click", onClick);
+    return b;
+  }
+  function show(node, message) { node.textContent = message; node.hidden = false; }
+  function hide(node) { node.hidden = true; node.textContent = ""; }
+
+  // ---------- remembering the key (only if the leader asks) ----------
+  function readStoredKey() {
+    try { return sessionStorage.getItem(STORE) || localStorage.getItem(STORE) || ""; }
+    catch (e) { return ""; }
+  }
+  function storeKey(value, remember) {
+    try {
+      sessionStorage.setItem(STORE, value);
+      if (remember) localStorage.setItem(STORE, value); else localStorage.removeItem(STORE);
+    } catch (e) { /* storage unavailable: stay signed in for this visit only */ }
+  }
+  function forgetKey() {
+    try { sessionStorage.removeItem(STORE); localStorage.removeItem(STORE); } catch (e) {}
+  }
+
+  // ---------- talking to GitHub ----------
+  function github(method, path, body) {
+    return fetch(API + path, {
+      method: method,
+      cache: "no-store",
+      headers: {
+        "Authorization": "Bearer " + key,
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+      },
+      body: body ? JSON.stringify(body) : undefined
+    }).then(function (response) {
+      return response.json().catch(function () { return {}; }).then(function (json) {
+        return { status: response.status, json: json };
+      });
+    });
+  }
+  function decode(base64) {
+    var binary = atob(String(base64).replace(/\s/g, ""));
+    var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+  function encode(text) {
+    var bytes = new TextEncoder().encode(text);
+    var binary = "";
+    for (var i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+
+  // ---------- sign in ----------
+  function signIn(candidate, remember, quiet) {
+    key = candidate.trim();
+    var errorBox = $("loginError");
+    hide(errorBox);
+    $("loginButton").disabled = true;
+    $("loginButton").textContent = "Signing in...";
+
+    return github("GET", "").then(function (result) {
+      if (result.status === 401) throw new Error("That key was not accepted. It may be mistyped or expired.");
+      if (result.status !== 200) throw new Error("GitHub could not be reached (code " + result.status + "). Try again in a minute.");
+      return loadList();
+    }).then(function () {
+      storeKey(key, remember);
+      $("key").value = "";
+      $("login").hidden = true;
+      $("app").hidden = false;
+    }).catch(function (error) {
+      key = "";
+      forgetKey();
+      if (!quiet) show(errorBox, error.message || "Could not sign in. Check your connection and try again.");
+    }).then(function () {
+      $("loginButton").disabled = false;
+      $("loginButton").textContent = "Sign in";
+    });
+  }
+
+  function loadList() {
+    return github("GET", "/contents/" + FILE + "?ref=" + BRANCH).then(function (result) {
+      if (result.status !== 200) throw new Error("The list of links could not be opened (code " + result.status + ").");
+      var parsed;
+      try { parsed = JSON.parse(decode(result.json.content)); }
+      catch (e) { throw new Error("The saved list is damaged. Ask the hub owner to restore the previous version on GitHub."); }
+      fileSha = result.json.sha;
+      data = tidy(parsed);
+      original = JSON.stringify(data);
+      dirty = false;
+      render();
+    });
+  }
+
+  // Make sure the list has every part the editor expects.
+  function tidy(raw) {
+    var clean = {
+      title: String(raw.title || ""),
+      subtitle: String(raw.subtitle || ""),
+      contact: String(raw.contact || ""),
+      updated: String(raw.updated || ""),
+      categories: Array.isArray(raw.categories) ? raw.categories.map(String) : [],
+      links: []
+    };
+    (Array.isArray(raw.links) ? raw.links : []).forEach(function (link) {
+      var item = {
+        name: String(link.name || "Untitled"),
+        url: String(link.url || ""),
+        description: String(link.description || ""),
+        category: String(link.category || "Other"),
+        owner: String(link.owner || ""),
+        status: String(link.status || "")
+      };
+      if (clean.categories.indexOf(item.category) === -1) clean.categories.push(item.category);
+      clean.links.push(item);
+    });
+    return clean;
+  }
+
+  // ---------- drawing the editor ----------
+  function markDirty() {
+    dirty = JSON.stringify(data) !== original;
+    updateBar();
+  }
+  function updateBar(savedMessage) {
+    var state = $("state");
+    state.className = "state" + (dirty ? " dirty" : savedMessage ? " saved" : "");
+    state.textContent = dirty ? "Unsaved changes" : (savedMessage || "No unsaved changes");
+    $("publish").disabled = !dirty;
+    $("discard").disabled = !dirty;
+  }
+
+  function linksIn(category) {
+    var found = [];
+    data.links.forEach(function (link, index) {
+      if (link.category === category) found.push(index);
+    });
+    return found;
+  }
+
+  function render() {
+    $("fTitle").value = data.title;
+    $("fSubtitle").value = data.subtitle;
+    $("fContact").value = data.contact;
+
+    var holder = $("sections");
+    holder.textContent = "";
+
+    data.categories.forEach(function (category, position) {
+      var block = el("div", "block");
+      var head = el("div", "block-head");
+      head.appendChild(el("h2", null, category));
+
+      var tools = el("div", "tools");
+      var up = button("↑", "icon", "Move section up", function () { moveSection(position, -1); });
+      var down = button("↓", "icon", "Move section down", function () { moveSection(position, 1); });
+      up.disabled = position === 0;
+      down.disabled = position === data.categories.length - 1;
+      tools.appendChild(up);
+      tools.appendChild(down);
+      tools.appendChild(button("Rename", "", "", function () { renameSection(position); }));
+      tools.appendChild(button("Remove", "danger", "", function () { removeSection(position); }));
+      head.appendChild(tools);
+      block.appendChild(head);
+
+      var rows = el("div", "rows");
+      var members = linksIn(category);
+      if (!members.length) rows.appendChild(el("div", "empty-row", "No links in this section yet."));
+
+      members.forEach(function (index, place) {
+        var link = data.links[index];
+        var row = el("div", "row");
+        var info = el("div", "info");
+        var name = el("div", "name", link.name);
+        if (!link.url) name.appendChild(el("span", "badge", "Coming soon"));
+        else if (link.status === "new") name.appendChild(el("span", "badge", "New"));
+        else if (link.status === "moving") name.appendChild(el("span", "badge", "Moving"));
+        info.appendChild(name);
+        info.appendChild(el("div", "url", link.url || "No web address yet"));
+        row.appendChild(info);
+
+        var rowTools = el("div", "tools");
+        var rowUp = button("↑", "icon", "Move " + link.name + " up", function () { moveLink(members, place, -1); });
+        var rowDown = button("↓", "icon", "Move " + link.name + " down", function () { moveLink(members, place, 1); });
+        rowUp.disabled = place === 0;
+        rowDown.disabled = place === members.length - 1;
+        rowTools.appendChild(rowUp);
+        rowTools.appendChild(rowDown);
+        rowTools.appendChild(button("Edit", "", "Edit " + link.name, function () { openLink({ index: index }); }));
+        rowTools.appendChild(button("Remove", "danger", "Remove " + link.name, function () { removeLink(index); }));
+        row.appendChild(rowTools);
+        rows.appendChild(row);
+      });
+      block.appendChild(rows);
+
+      var add = el("div", "add-row");
+      add.appendChild(button("+ Add a link", "", "Add a link to " + category, function () { openLink({ category: category }); }));
+      block.appendChild(add);
+      holder.appendChild(block);
+    });
+
+    updateBar();
+  }
+
+  // ---------- sections ----------
+  function moveSection(position, step) {
+    var target = position + step;
+    if (target < 0 || target >= data.categories.length) return;
+    var moved = data.categories.splice(position, 1)[0];
+    data.categories.splice(target, 0, moved);
+    markDirty(); render();
+  }
+  function askSectionName(message, current) {
+    var name = window.prompt(message, current || "");
+    if (name == null) return null;
+    name = name.trim();
+    if (!name) return null;
+    var clash = data.categories.some(function (existing) {
+      return existing.toLowerCase() === name.toLowerCase() && existing !== current;
+    });
+    if (clash) { window.alert("There is already a section called \"" + name + "\"."); return null; }
+    return name;
+  }
+  function renameSection(position) {
+    var old = data.categories[position];
+    var name = askSectionName("New name for this section:", old);
+    if (!name || name === old) return;
+    data.categories[position] = name;
+    data.links.forEach(function (link) { if (link.category === old) link.category = name; });
+    markDirty(); render();
+  }
+  function removeSection(position) {
+    var name = data.categories[position];
+    if (linksIn(name).length) {
+      window.alert("\"" + name + "\" still has links in it. Move or remove them first.");
+      return;
+    }
+    if (!window.confirm("Remove the empty section \"" + name + "\"?")) return;
+    data.categories.splice(position, 1);
+    markDirty(); render();
+  }
+  $("addSection").addEventListener("click", function () {
+    var name = askSectionName("Name for the new section:");
+    if (!name) return;
+    data.categories.push(name);
+    markDirty(); render();
+  });
+
+  // ---------- links ----------
+  function moveLink(members, place, step) {
+    var target = place + step;
+    if (target < 0 || target >= members.length) return;
+    var a = members[place], b = members[target];
+    var held = data.links[a];
+    data.links[a] = data.links[b];
+    data.links[b] = held;
+    markDirty(); render();
+  }
+  function removeLink(index) {
+    if (!window.confirm("Remove \"" + data.links[index].name + "\" from the hub?")) return;
+    data.links.splice(index, 1);
+    markDirty(); render();
+  }
+
+  function openLink(target) {
+    editing = target;
+    var link = target.index != null ? data.links[target.index]
+      : { name: "", url: "", description: "", category: target.category, owner: "", status: "" };
+    $("linkDialogTitle").textContent = target.index != null ? "Edit link" : "Add a link";
+    $("lName").value = link.name;
+    $("lUrl").value = link.url;
+    $("lDesc").value = link.description;
+    $("lOwner").value = link.owner;
+    $("lStatus").value = link.status === "new" || link.status === "moving" ? link.status : "";
+    var select = $("lCat");
+    select.textContent = "";
+    data.categories.forEach(function (category) {
+      var option = el("option", null, category);
+      option.value = category;
+      select.appendChild(option);
+    });
+    select.value = link.category;
+    hide($("linkError"));
+    $("linkDialog").showModal();
+    $("lName").focus();
+  }
+
+  function checkLink(name, url) {
+    if (!name) return "Give the link a name.";
+    if (url && !/^https?:\/\/\S+$/i.test(url)) return "The web address needs to start with https:// and have no spaces.";
+    if (/[?&#](token|key|password|pwd|secret|auth)=/i.test(url)) {
+      return "That address has a private access code built into it. This page is public, so it cannot be listed here. Use the tool's normal address instead.";
+    }
+    return "";
+  }
+
+  $("linkForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    var item = {
+      name: $("lName").value.trim(),
+      url: $("lUrl").value.trim(),
+      description: $("lDesc").value.trim(),
+      category: $("lCat").value,
+      owner: $("lOwner").value.trim(),
+      status: $("lStatus").value
+    };
+    var problem = checkLink(item.name, item.url);
+    if (problem) { show($("linkError"), problem); return; }
+
+    if (editing.index != null) data.links[editing.index] = item;
+    else data.links.push(item);
+    $("linkDialog").close();
+    markDirty(); render();
+  });
+  $("linkCancel").addEventListener("click", function () { $("linkDialog").close(); });
+
+  // ---------- page text ----------
+  [["fTitle", "title"], ["fSubtitle", "subtitle"], ["fContact", "contact"]].forEach(function (pair) {
+    $(pair[0]).addEventListener("input", function () {
+      data[pair[1]] = $(pair[0]).value;
+      markDirty();
+    });
+  });
+
+  // ---------- publish / discard ----------
+  $("discard").addEventListener("click", function () {
+    if (!window.confirm("Throw away the changes you have not published?")) return;
+    data = JSON.parse(original);
+    dirty = false;
+    hide($("appError"));
+    render();
+  });
+
+  $("publish").addEventListener("click", function () {
+    var errorBox = $("appError");
+    hide(errorBox);
+    if (!data.title.trim()) { show(errorBox, "The hub needs a title before it can be published."); return; }
+
+    data.updated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+    var text = JSON.stringify(data, null, 2) + "\n";
+    $("publish").disabled = true;
+    $("publish").textContent = "Publishing...";
+
+    github("PUT", "/contents/" + FILE, {
+      message: "Update links from the leader view",
+      content: encode(text),
+      sha: fileSha,
+      branch: BRANCH
+    }).then(function (result) {
+      if (result.status === 200 || result.status === 201) {
+        fileSha = result.json.content.sha;
+        original = JSON.stringify(data);
+        dirty = false;
+        updateBar("Published. The hub updates in about a minute.");
+        return;
+      }
+      if (result.status === 409 || result.status === 422) {
+        throw new Error("Someone else published changes after you opened this page. Refresh to get their version, then make your changes again.");
+      }
+      if (result.status === 401) throw new Error("Your editor key has expired. Sign out and ask the hub owner for a new one. Your changes are still on this screen.");
+      if (result.status === 403 || result.status === 404) throw new Error("This editor key is not allowed to change the hub. Ask the hub owner for a new one. Your changes are still on this screen.");
+      throw new Error("The changes could not be published (code " + result.status + "). Try again in a minute.");
+    }).catch(function (error) {
+      show(errorBox, error.message || "The changes could not be published. Check your connection and try again.");
+      updateBar();
+    }).then(function () {
+      $("publish").textContent = "Publish changes";
+    });
+  });
+
+  window.addEventListener("beforeunload", function (event) {
+    if (dirty) { event.preventDefault(); event.returnValue = ""; }
+  });
+
+  // ---------- sign in / out wiring ----------
+  $("loginForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    signIn($("key").value, $("remember").checked, false);
+  });
+  $("signOut").addEventListener("click", function () {
+    if (dirty && !window.confirm("You have changes that are not published. Sign out anyway?")) return;
+    dirty = false;
+    forgetKey();
+    key = ""; data = null;
+    $("app").hidden = true;
+    $("login").hidden = false;
+  });
+
+  var remembered = readStoredKey();
+  if (remembered) {
+    var keepRemembering = false;
+    try { keepRemembering = !!localStorage.getItem(STORE); } catch (e) {}
+    signIn(remembered, keepRemembering, true);
+  }
+})();
+</script>
+</body>
+</html>
