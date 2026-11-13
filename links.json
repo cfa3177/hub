@@ -22,7 +22,8 @@
       "description": "Check scheduled labor against the day's targets.",
       "category": "Operations",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "Positional Closing Checklist",
@@ -30,7 +31,8 @@
       "description": "Closing checklist for each position.",
       "category": "Operations",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "Manager Closing Checklist",
@@ -38,7 +40,8 @@
       "description": "End-of-night checklist for the closing manager.",
       "category": "Operations",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "2-3 PM Operational Lead Checklist",
@@ -46,7 +49,8 @@
       "description": "Afternoon checklist for the operational lead.",
       "category": "Operations",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "Waste Tracking",
@@ -54,7 +58,8 @@
       "description": "Daily waste entry and reporting.",
       "category": "Operations",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": true
     },
     {
       "name": "H.E.A.R.D. Log",
@@ -62,7 +67,8 @@
       "description": "Log and follow up on guest recovery.",
       "category": "Training",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "Daily Training Log",
@@ -70,15 +76,17 @@
       "description": "Record what was trained today.",
       "category": "Training",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "Training Tracker",
-      "url": "",
+      "url": "https://docs.google.com/forms/d/e/1FAIpQLSdOh_b_wxfn0S_HcRto3X7lBHxaXzdF2zCIry2WkIfF5J48eA/viewform",
       "description": "Who is trained on what, and what is due.",
       "category": "Training",
-      "owner": "Brent",
-      "status": ""
+      "owner": "Iris",
+      "status": "",
+      "hidden": false
     },
     {
       "name": "PTO Request Form",
@@ -86,7 +94,8 @@
       "description": "Request paid time off.",
       "category": "HR",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "W2 Address Change Form",
@@ -94,7 +103,8 @@
       "description": "Update the mailing address for your W-2.",
       "category": "HR",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "Refund Tracker",
@@ -102,7 +112,8 @@
       "description": "Log a guest refund.",
       "category": "Finance",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "Uniform Request Form",
@@ -110,7 +121,8 @@
       "description": "Order uniform pieces.",
       "category": "General",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "Promo Free Tracker",
@@ -118,7 +130,8 @@
       "description": "Log promotional free items given out.",
       "category": "Finance",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "Giving Request Form",
@@ -126,7 +139,8 @@
       "description": "Donation and sponsorship requests.",
       "category": "Marketing",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "Catering Quote Tool",
@@ -134,7 +148,8 @@
       "description": "Build and email a catering quote.",
       "category": "Catering",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "Facilities Tracker",
@@ -142,15 +157,17 @@
       "description": "Open repairs, vendors, and maintenance.",
       "category": "Facilities & Supply",
       "owner": "Carlos",
-      "status": ""
+      "status": "",
+      "hidden": true
     },
     {
       "name": "Daily Facilities Walk",
-      "url": "",
+      "url": "https://docs.google.com/forms/d/e/1FAIpQLSdlYakFg8x5_J0mfToldQe11K-qEZrJXWIjYmetwbj67dySYw/viewform",
       "description": "Lot walk and truck order check.",
       "category": "Facilities & Supply",
       "owner": "Anthony",
-      "status": ""
+      "status": "",
+      "hidden": false
     },
     {
       "name": "Inventory Analyzer",
@@ -158,15 +175,8 @@
       "description": "Inventory counts and usage trends.",
       "category": "Facilities & Supply",
       "owner": "Brent",
-      "status": ""
-    },
-    {
-      "name": "Manager Hub",
-      "url": "https://script.google.com/macros/s/AKfycbwuAW9sf08q8FmkF4YmjShpev2FgzS2idV4HuERDYw-LdM3V-8_BAMpJob3K6nUTdiTRA/exec",
-      "description": "Manager tools in one place.",
-      "category": "Leadership",
-      "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": true
     },
     {
       "name": "Payroll Operations Hub",
@@ -174,7 +184,8 @@
       "description": "Payroll review and processing for both locations.",
       "category": "Leadership",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": true
     },
     {
       "name": "OT Reconciliation Calculator",
@@ -182,7 +193,8 @@
       "description": "Checks overtime across Cockrell Hill and DBU.",
       "category": "Leadership",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": true
     },
     {
       "name": "Staffing Calibration",
@@ -190,7 +202,8 @@
       "description": "Sales-per-labor-hour staffing targets by daypart.",
       "category": "Leadership",
       "owner": "Brent",
-      "status": ""
+      "status": "",
+      "hidden": true
     },
     {
       "name": "Example: DBU project",
@@ -198,7 +211,8 @@
       "description": "Replace this with one of Kyla's projects.",
       "category": "DBU",
       "owner": "Kyla",
-      "status": "new"
+      "status": "new",
+      "hidden": false
     }
   ]
 }
