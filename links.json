@@ -1,7 +1,7 @@
 {
   "title": "Cockrell Hill & DBU Hub",
   "subtitle": "Every tool, form, and tracker in one place.",
-  "contact": "Brent",
+  "contact": "Jeff",
   "updated": "November 12, 2026",
   "categories": [
     "Operations",
@@ -116,7 +116,7 @@
       "name": "Promo Free Tracker",
       "url": "https://docs.google.com/forms/d/e/1FAIpQLSdnJKgw0ZWmj-c60ae12pkL6c8DbuW5uYJquDP5Bzw-bISduA/viewform",
       "description": "Log promotional free items given out.",
-      "category": "General",
+      "category": "Finance",
       "owner": "Brent",
       "status": ""
     },
@@ -132,14 +132,6 @@
       "name": "Catering Quote Tool",
       "url": "https://script.google.com/macros/s/AKfycbygIPt07mAdW0zI1suEtdh8VMhBSRlvQeA_0n4tyRquqr91H0fzruaBLcIDeo1U9icX/exec",
       "description": "Build and email a catering quote.",
-      "category": "Catering",
-      "owner": "Brent",
-      "status": ""
-    },
-    {
-      "name": "Catering Pipeline",
-      "url": "",
-      "description": "Open quotes and upcoming orders.",
       "category": "Catering",
       "owner": "Brent",
       "status": ""
