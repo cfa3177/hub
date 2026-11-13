@@ -131,6 +131,9 @@
   .row .name { font-weight: 600; }
   .row .url { font-size: .8rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .badge { margin-left: 6px; padding: 1px 7px; font-size: .7rem; font-weight: 600; border-radius: 999px; background: var(--gray-soft); color: var(--muted); }
+  select.mover { width: auto; max-width: 150px; padding: 8px 10px; cursor: pointer; }
+  .row.is-hidden .info { opacity: .55; }
+  .badge.hidden-badge { background: var(--ink); color: var(--bg); }
   .empty-row { padding: 10px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .92rem; }
   .add-row { margin-top: 10px; }
   @media (max-width: 600px) {
@@ -383,7 +386,8 @@
         description: String(link.description || ""),
         category: String(link.category || "Other"),
         owner: String(link.owner || ""),
-        status: String(link.status || "")
+        status: String(link.status || ""),
+        hidden: link.hidden === true
       };
       if (clean.categories.indexOf(item.category) === -1) clean.categories.push(item.category);
       clean.links.push(item);
@@ -439,14 +443,19 @@
 
       var rows = el("div", "rows");
       var members = linksIn(category);
-      if (!members.length) rows.appendChild(el("div", "empty-row", "No links in this section yet."));
+      if (!members.length) {
+        rows.appendChild(el("div", "empty-row", "No links in this section yet."));
+      } else if (members.every(function (index) { return data.links[index].hidden; })) {
+        rows.appendChild(el("div", "empty-row", "Every link here is hidden, so this section does not appear on the hub."));
+      }
 
       members.forEach(function (index, place) {
         var link = data.links[index];
-        var row = el("div", "row");
+        var row = el("div", "row" + (link.hidden ? " is-hidden" : ""));
         var info = el("div", "info");
         var name = el("div", "name", link.name);
-        if (!link.url) name.appendChild(el("span", "badge", "Coming soon"));
+        if (link.hidden) name.appendChild(el("span", "badge hidden-badge", "Hidden"));
+        else if (!link.url) name.appendChild(el("span", "badge", "Coming soon"));
         else if (link.status === "new") name.appendChild(el("span", "badge", "New"));
         else if (link.status === "moving") name.appendChild(el("span", "badge", "Moving"));
         info.appendChild(name);
@@ -460,6 +469,24 @@
         rowDown.disabled = place === members.length - 1;
         rowTools.appendChild(rowUp);
         rowTools.appendChild(rowDown);
+        if (data.categories.length > 1) {
+          var mover = el("select", "mover");
+          mover.setAttribute("aria-label", "Move " + link.name + " to another section");
+          var prompt = el("option", null, "Move to…");
+          prompt.value = "";
+          mover.appendChild(prompt);
+          data.categories.forEach(function (other) {
+            if (other === category) return;
+            var option = el("option", null, other);
+            option.value = other;
+            mover.appendChild(option);
+          });
+          mover.addEventListener("change", function () {
+            if (mover.value) moveToSection(index, mover.value);
+          });
+          rowTools.appendChild(mover);
+        }
+        rowTools.appendChild(button(link.hidden ? "Show" : "Hide", "", (link.hidden ? "Show " : "Hide ") + link.name, function () { toggleHidden(index); }));
         rowTools.appendChild(button("Edit", "", "Edit " + link.name, function () { openLink({ index: index }); }));
         rowTools.appendChild(button("Remove", "danger", "Remove " + link.name, function () { removeLink(index); }));
         row.appendChild(rowTools);
@@ -530,6 +557,17 @@
     data.links[b] = held;
     markDirty(); render();
   }
+  // Moves a link to the bottom of another section.
+  function moveToSection(index, category) {
+    var link = data.links.splice(index, 1)[0];
+    link.category = category;
+    data.links.push(link);
+    markDirty(); render();
+  }
+  function toggleHidden(index) {
+    data.links[index].hidden = !data.links[index].hidden;
+    markDirty(); render();
+  }
   function removeLink(index) {
     if (!window.confirm("Remove \"" + data.links[index].name + "\" from the hub?")) return;
     data.links.splice(index, 1);
@@ -576,7 +614,8 @@
       description: $("lDesc").value.trim(),
       category: $("lCat").value,
       owner: $("lOwner").value.trim(),
-      status: $("lStatus").value
+      status: $("lStatus").value,
+      hidden: editing.index != null ? data.links[editing.index].hidden : false
     };
     var problem = checkLink(item.name, item.url);
     if (problem) { show($("linkError"), problem); return; }

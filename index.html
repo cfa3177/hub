@@ -232,11 +232,18 @@
     return /^https?:\/\//i.test(url) ? url : "";
   }
 
+  // Links a leader has hidden stay in the file but are not shown here.
+  hub.links = hub.links.filter(function (link) { return link.hidden !== true; });
+
   // Work out the section order: the listed categories first, then anything else.
+  // Sections with nothing to show are left out.
   var categories = (hub.categories || []).slice();
   hub.links.forEach(function (link) {
     var cat = link.category || "Other";
     if (categories.indexOf(cat) === -1) categories.push(cat);
+  });
+  categories = categories.filter(function (cat) {
+    return hub.links.some(function (link) { return (link.category || "Other") === cat; });
   });
 
   var state = { query: "", category: "All" };
