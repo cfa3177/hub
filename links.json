@@ -222,6 +222,15 @@
       "owner": "Kyla",
       "status": "new",
       "hidden": false
+    },
+    {
+      "name": "FOH Lineup",
+      "url": "https://docs.google.com/spreadsheets/d/17cLOfoEigQLI3E3aoI1yw4kAZySif7-4EZ5sQm8qbTA/edit?pli=1&gid=70560978#gid=70560978",
+      "description": "",
+      "category": "Operations",
+      "owner": "Iris",
+      "status": "",
+      "hidden": false
     }
   ]
 }
