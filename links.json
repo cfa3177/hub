@@ -2,7 +2,7 @@
   "title": "Cockrell Hill & DBU Hub",
   "subtitle": "Every tool, form, and tracker in one place.",
   "contact": "Jeff",
-  "updated": "November 12, 2026",
+  "updated": "November 13, 2026",
   "categories": [
     "Operations",
     "Training",
@@ -238,6 +238,15 @@
       "description": "",
       "category": "Operations",
       "owner": "Kyla",
+      "status": "",
+      "hidden": false
+    },
+    {
+      "name": "PTO Request Form",
+      "url": "https://script.google.com/macros/s/AKfycbx0q-TUhgXBm64vfZDtNYtBD2bfrTsU7iXA4hfAqwShNzSfyj4xi4bgh0InfZh-KI04/exec?view=pto-request",
+      "description": "",
+      "category": "HR",
+      "owner": "Brent",
       "status": "",
       "hidden": false
     }
