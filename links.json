@@ -231,6 +231,15 @@
       "owner": "Iris",
       "status": "",
       "hidden": false
+    },
+    {
+      "name": "Manager Knowledge Base",
+      "url": "https://drive.google.com/file/d/1Qc1-Jw0DKoAgDzpMsjIOPR0hCaS9UKIl/view?usp=drive_link",
+      "description": "",
+      "category": "Operations",
+      "owner": "Kyla",
+      "status": "",
+      "hidden": false
     }
   ]
 }
