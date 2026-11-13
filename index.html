@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Asks search engines not to list this page. This is a courtesy, not a lock. -->
+<meta name="robots" content="noindex, nofollow">
+<title>Store Hub</title>
+<style>
+  :root {
+    --bg: #faf8f5;
+    --surface: #ffffff;
+    --ink: #1f2328;
+    --muted: #5f6670;
+    --line: #e4e0da;
+    --accent: #b3202a;
+    --accent-soft: #fbe9ea;
+    --amber: #8a5a00;
+    --amber-soft: #fdf1d8;
+    --gray-soft: #eeece8;
+    --shadow: 0 1px 2px rgba(31, 35, 40, .06), 0 4px 14px rgba(31, 35, 40, .05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15171a;
+      --surface: #1e2125;
+      --ink: #ecedee;
+      --muted: #9ba1a9;
+      --line: #2e3238;
+      --accent: #f0767d;
+      --accent-soft: #3a1f22;
+      --amber: #f0c060;
+      --amber-soft: #3a2f16;
+      --gray-soft: #2a2d32;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+  header { padding: 36px 0 12px; }
+  h1 { margin: 0; font-size: 1.9rem; line-height: 1.2; letter-spacing: -.01em; }
+  .subtitle { margin: 6px 0 0; color: var(--muted); }
+
+  .bar {
+    position: sticky; top: 0; z-index: 5;
+    background: var(--bg);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .search {
+    width: 100%;
+    padding: 12px 14px;
+    font: inherit;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .search::placeholder { color: var(--muted); }
+  .search:focus, .chip:focus-visible, .card:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .chips {
+    display: flex; gap: 8px; margin-top: 10px;
+    overflow-x: auto; padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: none;
+    padding: 6px 12px;
+    font: inherit; font-size: .9rem;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .chip[aria-pressed="true"] {
+    background: var(--accent); border-color: var(--accent); color: #fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    .chip[aria-pressed="true"] { color: #15171a; }
+  }
+
+  main { padding: 8px 0 40px; }
+  section { margin-top: 28px; }
+  h2 {
+    margin: 0 0 12px;
+    font-size: .82rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted);
+  }
+  .grid {
+    display: grid; gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+  .card {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    color: inherit; text-decoration: none;
+    min-height: 112px;
+  }
+  a.card { transition: transform .12s ease, border-color .12s ease; }
+  a.card:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .card.pending { box-shadow: none; background: transparent; border-style: dashed; }
+  .card.pending .name, .card.pending .desc { color: var(--muted); }
+
+  .top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .name { font-weight: 600; line-height: 1.3; }
+  .desc { color: var(--muted); font-size: .92rem; flex: 1; }
+  .owner { font-size: .8rem; color: var(--muted); }
+  .badge {
+    flex: none;
+    padding: 2px 8px;
+    font-size: .72rem; font-weight: 600;
+    border-radius: 999px; white-space: nowrap;
+  }
+  .badge.new { background: var(--accent-soft); color: var(--accent); }
+  .badge.moving { background: var(--amber-soft); color: var(--amber); }
+  .badge.soon { background: var(--gray-soft); color: var(--muted); }
+
+  .empty, .problem {
+    margin-top: 32px; padding: 24px;
+    text-align: center; color: var(--muted);
+    border: 1px dashed var(--line); border-radius: 12px;
+  }
+  .problem { text-align: left; color: var(--ink); }
+  .problem strong { display: block; margin-bottom: 6px; }
+
+  footer {
+    padding: 20px 0 40px;
+    border-top: 1px solid var(--line);
+    color: var(--muted); font-size: .85rem;
+  }
+  @media (prefers-reduced-motion: reduce) { a.card { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1 id="title">Store Hub</h1>
+    <p class="subtitle" id="subtitle"></p>
+  </header>
+</div>
+
+<div class="bar">
+  <div class="wrap">
+    <input class="search" id="search" type="search" placeholder="Search tools" aria-label="Search tools" autocomplete="off">
+    <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <main id="main"></main>
+  <footer id="footer"></footer>
+</div>
+
+<!-- The list of links lives in links.js. Edit that file, not this one. -->
+<script src="links.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var main = document.getElementById("main");
+  var hub = window.HUB;
+
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  // If links.js is missing or has a typo, say so plainly instead of going blank.
+  if (!hub || !Array.isArray(hub.links)) {
+    var box = el("div", "problem");
+    box.appendChild(el("strong", null, "The list of links could not be loaded."));
+    box.appendChild(el("span", null,
+      "This usually means the last edit to links.js left out a comma or a quote mark. " +
+      "Undo that edit and the page will come back."));
+    main.appendChild(box);
+    document.getElementById("search").disabled = true;
+    return;
+  }
+
+  // Header and footer text
+  if (hub.title) {
+    document.getElementById("title").textContent = hub.title;
+    document.title = hub.title;
+  }
+  document.getElementById("subtitle").textContent = hub.subtitle || "";
+  var footerBits = [];
+  if (hub.contact) footerBits.push("Missing a link or found a broken one? Ask " + hub.contact + ".");
+  if (hub.updated) footerBits.push("Last updated " + hub.updated + ".");
+  document.getElementById("footer").textContent = footerBits.join(" ");
+
+  // Only real web addresses become clickable.
+  function safeUrl(value) {
+    var url = String(value || "").trim();
+    return /^https?:\/\//i.test(url) ? url : "";
+  }
+
+  // Work out the section order: the listed categories first, then anything else.
+  var categories = (hub.categories || []).slice();
+  hub.links.forEach(function (link) {
+    var cat = link.category || "Other";
+    if (categories.indexOf(cat) === -1) categories.push(cat);
+  });
+
+  var state = { query: "", category: "All" };
+
+  function matches(link) {
+    var cat = link.category || "Other";
+    if (state.category !== "All" && cat !== state.category) return false;
+    if (!state.query) return true;
+    var haystack = [link.name, link.description, cat, link.owner].join(" ").toLowerCase();
+    return state.query.split(/\s+/).every(function (word) {
+      return haystack.indexOf(word) !== -1;
+    });
+  }
+
+  function buildCard(link) {
+    var url = safeUrl(link.url);
+    var card = el(url ? "a" : "div", "card" + (url ? "" : " pending"));
+    if (url) {
+      card.href = url;
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
+    }
+
+    var top = el("div", "top");
+    top.appendChild(el("span", "name", link.name || "Untitled"));
+    var status = String(link.status || "").toLowerCase();
+    if (!url) top.appendChild(el("span", "badge soon", "Coming soon"));
+    else if (status === "new") top.appendChild(el("span", "badge new", "New"));
+    else if (status === "moving") top.appendChild(el("span", "badge moving", "Moving"));
+    card.appendChild(top);
+
+    card.appendChild(el("span", "desc", link.description || ""));
+    if (link.owner) card.appendChild(el("span", "owner", "Ask " + link.owner));
+    return card;
+  }
+
+  function render() {
+    main.textContent = "";
+    var shown = 0;
+
+    categories.forEach(function (cat) {
+      var links = hub.links.filter(function (link) {
+        return (link.category || "Other") === cat && matches(link);
+      });
+      if (!links.length) return;
+      shown += links.length;
+
+      var section = el("section");
+      section.appendChild(el("h2", null, cat));
+      var grid = el("div", "grid");
+      links.forEach(function (link) { grid.appendChild(buildCard(link)); });
+      section.appendChild(grid);
+      main.appendChild(section);
+    });
+
+    if (!shown) {
+      main.appendChild(el("div", "empty", "Nothing matches that search."));
+    }
+  }
+
+  // Category buttons
+  var chips = document.getElementById("chips");
+  ["All"].concat(categories).forEach(function (cat) {
+    var chip = el("button", "chip", cat);
+    chip.type = "button";
+    chip.setAttribute("aria-pressed", cat === "All" ? "true" : "false");
+    chip.addEventListener("click", function () {
+      state.category = cat;
+      Array.prototype.forEach.call(chips.children, function (other) {
+        other.setAttribute("aria-pressed", other === chip ? "true" : "false");
+      });
+      render();
+    });
+    chips.appendChild(chip);
+  });
+
+  // Search box. Pressing "/" jumps to it.
+  var search = document.getElementById("search");
+  search.addEventListener("input", function () {
+    state.query = search.value.trim().toLowerCase();
+    render();
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "/" && document.activeElement !== search) {
+      event.preventDefault();
+      search.focus();
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
